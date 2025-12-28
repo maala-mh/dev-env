@@ -19,10 +19,18 @@ if [[ $platform != "Linux" ]]; then
 	echo "${red} unsupported platform, only Linux is supported for now :)${red}"
 fi
 
+echo "${yel}Installing rancher desktop..${yel}${end}"
+
+curl -s https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/Release.key | gpg --dearmor | sudo dd status=none of=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg
+echo 'deb [signed-by=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg] https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/ ./' | sudo dd status=none of=/etc/apt/sources.list.d/isv-rancher-stable.list
+sudo apt update
+sudo apt install -y rancher-desktop
+
+echo "${yel}switching to rancher desktop context..${yel}${end}"
+echo "${red}attention: you may need to install google cloud sdk to use this context${red}${end}"
+kubectl config use-context rancher-desktop
+
+
 echo "${yel}Installing skaffold..${yel}${end}"
 curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-"$arch" && \
         sudo install skaffold /usr/local/bin/
-
-echo "${yel}Installing minikube..${yel}${end}"
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-"$arch" && \
-        sudo install minikube-linux-"$arch" /usr/local/bin/minikube
